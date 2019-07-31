@@ -1,0 +1,24 @@
+openssl req -new -newkey rsa:2048 -sha256 -nodes -out example_com.csr -keyout example_com.key -subj "/C=CN/ST=Beijing/L=Beijing/O=Example Inc./OU=Web Security/CN=example.com"
+
+C：Country ，单位所在国家，为两位数的国家缩写，如： CN 就是中国
+ST 字段： State/Province ，单位所在州或省
+L 字段： Locality ，单位所在城市 / 或县区
+O 字段： Organization ，此网站的单位名称;
+OU 字段： Organization Unit，下属部门名称;也常常用于显示其他证书相关信息，如证书类型，证书产品名称或身份验证类型或验证内容等;
+CN 字段： Common Name ，网站的域名;
+
+生成证书文件
+
+openssl x509 -req -days 365 -in example_com.csr -signkey example_com.key -out example_com.crt
+
+
+
+权限问题
+
+修改user 指令指定 为nginx用户，待确认
+
+
+the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /usr/local/nginx/conf/nginx.conf:2
+
+
+只有当主进程以超级用户权限运行时，“user”指令才有意义，在/usr/local/nginx/conf/nginx.conf:2中忽略

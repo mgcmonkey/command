@@ -1,0 +1,87 @@
+yum -y install gcc
+
+1.gcc 或者 c 编译器
+
+yum -y install pcre-devel openssl openssl-devel
+2.OpenSSL 安装或检查 https相关模块以来 centos系统 yum list installed openssl
+3.PCRE(Perl Compatible Regular Expressions) 安装或检查 rewrite功能依赖 yum list installed pcre
+4. 非特权用户 无法执行sudo 报 如下错误 ALL=(ALL)ALL ... is not in the sudoers file.  This incident will be reported.
+vim /etc/sudoers
+添加 nginx ALL(ALL) ALL
+解释：处理这个问题很简单，但应该先理解其原理再操作
+首先要明白root的密码一般用户是不应改知道的，但一般用户有时可能要用到root的一些权限。
+这里就有了一个 /etc/sudoers 文件，用来保存一些用户，使这些用户可以通过sudo命令来暂时获取root的权限。
+这些用户使用sudo时输入的密码是当前用户密码，而不是root密 码。还可一在sudoers文件里限制一般用户的权限，这样就有了安全保证。
+
+
+1.切换到超级用户root
+   $su root
+2.查看/etc/sudoers权限，可以看到当前权限为440
+   $ ls -all /etc/sudoers
+   -r--r----- 1 root root 744  6月  8 10:29 /etc/sudoers
+3.更改权限为777
+   $chmod 777 /etc/sudoers
+4.编辑/etc/sudoers
+   $vi /etc/sudoers
+5.在root    ALL=(ALL) ALL 下面添加一行
+   jack    ALL=(ALL)  ALL
+
+第一个ALL是指网络中的主机，我们后面把它改成了主机名，它指明jack可以在此主机上执行后面的命令。
+第二个括号里的ALL是指目标用户，也就是以谁的身份去执行命令。
+最后一个ALL当然就是指命令名了。
+
+
+6.nginx: [emerg] bind() to 0.0.0.0:80 failed (13: Permission denied)
+
+以非root权限启动时，会出现 nginx: [emerg] bind() to 0.0.0.0:80 failed (13: Permission denied) 错误
+原因：Linux只有root用户可以使用1024一下的端口
+解决办法：1.已root权限启动
+
+7.安装 linux 网络命令（例如netstat） 坚持 nginx 服务是否已经启动
+
+yum install net-tools
+
+8.启动后服务访问（防火墙阻止）
+
+
+1、firewalld的基本使用
+启动： systemctl start firewalld
+关闭： systemctl stop firewalld
+查看状态： systemctl status firewalld 
+开机禁用  ： systemctl disable firewalld
+开机启用  ： systemctl enable firewalld
+ 
+ 
+2.systemctl是CentOS7的服务管理工具中主要的工具，它融合之前service和chkconfig的功能于一体。
+启动一个服务：systemctl start firewalld.service
+关闭一个服务：systemctl stop firewalld.service
+重启一个服务：systemctl restart firewalld.service
+显示一个服务的状态：systemctl status firewalld.service
+在开机时启用一个服务：systemctl enable firewalld.service
+在开机时禁用一个服务：systemctl disable firewalld.service
+查看服务是否开机启动：systemctl is-enabled firewalld.service
+查看已启动的服务列表：systemctl list-unit-files|grep enabled
+查看启动失败的服务列表：systemctl --failed
+
+3.配置firewalld-cmd
+
+查看版本： firewall-cmd --version
+查看帮助： firewall-cmd --help
+显示状态： firewall-cmd --state
+查看所有打开的端口： firewall-cmd --zone=public --list-ports
+更新防火墙规则： firewall-cmd --reload
+查看区域信息:  firewall-cmd --get-active-zones
+查看指定接口所属区域： firewall-cmd --get-zone-of-interface=eth0
+拒绝所有包：firewall-cmd --panic-on
+取消拒绝状态： firewall-cmd --panic-off
+查看是否拒绝： firewall-cmd --query-panic
+ 
+那怎么开启一个端口呢
+添加
+firewall-cmd --zone=public --add-port=80/tcp --permanent    （--permanent永久生效，没有此参数重启后失效）
+重新载入
+firewall-cmd --reload
+查看
+firewall-cmd --zone= public --query-port=80/tcp
+删除
+firewall-cmd --zone= public --remove-port=80/tcp --permanent

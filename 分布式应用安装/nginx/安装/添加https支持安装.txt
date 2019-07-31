@@ -1,0 +1,1 @@
+./configure --with-http_ssl_module  --with-openssl=path --with-openssl-opt=parameters 
